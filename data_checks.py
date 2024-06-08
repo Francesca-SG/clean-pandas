@@ -15,16 +15,16 @@ def check_missing_values(df):
 
 # Looks for duplicate values in a specific column and doesn't modify them
 def duplicate_company_name(df):
-    duplicates = df[df.duplicated('company_name', keep=False)]
-    print(duplicates.sort_values('company_name'))
+    duplicates = df[df.duplicated('company', keep=False)]
+    print(duplicates.sort_values('company'))
 
 
-# Checks if the 'current_worker_count' column exists and contains numerical data
+# Checks if the 'employees' column exists and contains numerical data
 def is_empty_column(df):
-    if 'current_worker_count' in df.columns:
-        if pd.api.types.is_numeric_dtype(df['current_worker_count']):
-            print("'current_worker_count' column exists and contains numerical data.")
+    if 'employees' in df.columns:
+        if pd.api.types.is_numeric_dtype(df['employees']):
+            print("'employees' column exists and contains numerical data.")
         else:
-            print("'current_worker_count' column exists but does not contain numerical data.")
+            print("'employees' column exists but does not contain numerical data.")
     else:
-        print("'current_worker_count' column does not exist.")
+        print("'employees' column does not exist.")
