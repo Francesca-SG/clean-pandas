@@ -95,6 +95,8 @@ data_checks.show_outliers(df)
 # Returns the data from a specified row 
 print(df.iloc[7])
 
+# Gives a summary of the main characteristics of the dataset
+print(df.describe())
 # Prints the column names, number of not nulls in each and the data types.
 #print(df.info())
 #print(df.columns)
