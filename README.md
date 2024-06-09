@@ -53,7 +53,9 @@ In this project, my aim is to answer the following questions:
     - Renaming columns for clarity
     - Checking for duplicate entries
     - Modifying data types for consistency
-    - Removing irrelevant columns
+    - Removing irrelevant columns 
+    - Remoing rows with inaccurate data
+    - Checking for outliers 
 
 
 ## Skills Demonstrated
