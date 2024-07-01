@@ -1,58 +1,66 @@
-#imports libraries
 import os
-import pandas as pd 
-from scipy import stats
-import numpy as np
-#import modules
+import pandas as pd
 import data_checks
 
-
-# Function gets directory of current script, builds the path to the file, and read files
 def read_data(file_name):
+    """
+    Reads data from a CSV file into a DataFrame.
+    
+    Parameters:
+    file_name (str): The name of the CSV file to read.
+
+    Returns:
+    pd.DataFrame: The DataFrame containing the data from the CSV file.
+    """
     script_dir = os.path.dirname(os.path.realpath(__file__))
     file_path = os.path.join(script_dir, file_name)
-    # Data Frame (df) is a 2D data structure, like an array or table
     df = pd.read_csv(file_path)
     return df
 
 df = read_data('INC5000_Companies_2019.csv')
 
-# Renames columns in table and assigns it back to the dataframe, saving the changes
-df = df.rename(columns={'workers':'employees', 'previous_workers':'former_employees', 'name':'company'})
+# Renaming columns for clarity
+df = df.rename(columns={
+    'workers': 'employees', 
+    'previous_workers': 'former_employees', 
+    'name': 'company'
+})
 
-# Fills null with a value in this case the mean 
-df['employees']= df['employees'].fillna(df['employees'].mean())
-df['metro'] = df['metro'].fillna('Not Applicable') 
+# Filling missing values in specific columns
+df['employees'] = df['employees'].fillna(df['employees'].mean())
+df['metro'] = df['metro'].fillna('Not Applicable')
 
-# Converts column data type to integers
-df['employees']= df['employees'].astype(int)
+# Converting 'employees' column to integers
+df['employees'] = df['employees'].astype(int)
 
-# Returns boolean value for each row
-# Print(df.duplicated())
+# Removing unnecessary columns
+df = df.drop(['url', 'profile'], axis=1)
 
-# removes columns, axis 1=column and 0=row
-df = df.drop('url', axis=1)
-df = df.drop('profile', axis=1)
-
-
+# Check for missing values
 data_checks.check_missing_values(df)
 
-# Function looks for duplicate values in a specific 
+# Look for duplicate company names
 data_checks.duplicate_company_name(df)
 
-
-# Uses title case to make all string values in the city column first letter caps, rest lower case
+# Converting 'city' column to title case
 df['city'] = df['city'].str.title()
 
-# Prints if dataframe is empty or not 
+# Check if the DataFrame is empty
 data_checks.empty_dataframe(df)
 
-# Check if the 'employees' column exists and contains numerical data
+# Check if 'employees' column exists and contains numerical data
 data_checks.is_empty_column(df)
 
-
-# Replaces the values and converts to float, to handle the multiplication, then converts to int
 def convert_revenue(value):
+    """
+    Converts revenue string to an integer value.
+    
+    Parameters:
+    value (str): The revenue value as a string.
+
+    Returns:
+    int: The revenue value as an integer.
+    """
     value = value.replace(',', '')
     if 'Billion' in value:
         value = value.replace('Billion', '').strip()
@@ -65,40 +73,28 @@ def convert_revenue(value):
 
 df['revenue'] = df['revenue'].apply(convert_revenue)
 
-#dt = df.dtypes
-#print(dt)
+# Rounding the values in 'growth_%' column and converting to integers
+df['growth_%'] = df['growth_%'].round(0).astype(int)
 
-# Rounds the values in the values in column to a whole number
-df['growth_%'] =  df['growth_%'].round(0)
-df['growth_%'] =  df['growth_%'].astype(int)
-
-# This splits the string at the comma and only keeps the first part
+# Splitting the 'metro' column at the comma and keeping the first part
 df['metro'] = df['metro'].str.split(',').str[0]
 
-
-# Checks for unique ranks and prints each row
+# Check for unique ranks and print each row
 data_checks.unique_ranks(df)
 data_checks.show_duplicates(df)
 
-# Removes specific row from dataframe, based on the condition 'rank' is 4997
-df = df.drop(df[(df['rank'] == 4997)].index)
+# Removing a specific row from DataFrame based on a condition
+df = df.drop(df[df['rank'] == 4997].index)
 
-
-print('this is the standard deviation')
+print('This is the standard deviation')
 data_checks.show_outliers(df)
 
-# Prints the first 5 rows of the table, df.tail prints the last 5
-#print(df.head())
-#print(df.tail())
+# Printing the data from a specified row
+#print(df.iloc[7])
 
+# Summarizing the main characteristics of the dataset
+#print(df.describe())
 
-# Returns the data from a specified row 
-print(df.iloc[7])
-
-# Gives a summary of the main characteristics of the dataset
-print(df.describe())
-# Prints the column names, number of not nulls in each and the data types.
-#print(df.info())
-#print(df.columns)
-
+# Optional: Uncomment to export the cleaned DataFrame to a CSV file
+# df.to_csv('cleaned_data.csv', index=False)
 
